@@ -1,10 +1,13 @@
 import pygame # type: ignore
 from player import Player
 from asteroid import Asteroid
+from shot import Shot
 from asteroidfield import *
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 def main():
+    # Initialization code
+    # ---------------------------------------
     pygame.init()
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
@@ -27,6 +30,10 @@ def main():
         updateable, 
         drawable
     )
+    Shot.containers = (
+        updateable,
+        drawable
+    )
     AsteroidField.containers = (
         updateable
         )
@@ -34,6 +41,7 @@ def main():
     asteroid_field = AsteroidField()
 
     # Game Loop
+    # -------------------------------------------
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
