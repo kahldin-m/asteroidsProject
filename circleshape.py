@@ -26,3 +26,14 @@ class CircleShape(pygame.sprite.Sprite):
         if distance < self.radius + other.radius:
             return True
         return False
+    
+    def check_bounds(self, screen_width=1280, screen_height=720):
+        if self.position.x < -self.radius:
+            self.position.x = screen_width + self.radius
+        elif self.position.x > screen_width + self.radius:
+            self.position.x = -self.radius
+            
+        if self.position.y < -self.radius:
+            self.position.y = screen_height + self.radius
+        elif self.position.y > screen_height + self.radius:
+            self.position.y = -self.radius

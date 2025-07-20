@@ -25,10 +25,11 @@ def initialize_game(center_x, center_y):
     Asteroid.containers = (asteroids, updateable, drawable)
     Player.containers = (updateable, drawable)
     Shot.containers = (updateable, drawable, shots)
-    AsteroidField.containers = (updateable)
+    # AsteroidField.containers = (updateable,)
     
     player = Player(center_x, center_y)
-    field = AsteroidField()
+    field = AsteroidField(asteroids)
+    updateable.add(field)
 
     # Reset score for game restarts
     return {
@@ -50,10 +51,6 @@ def handle_menu(window, cx, cy):  # center_x(y)
 def handle_playing(window, dt, state):
     window.fill("white")
     state["updateable"].update(dt)
-
-    # If shots leave window, delete them
-    for shot in state["shots"]:
-        shot.check_bounds(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     # Collision check: player dies
     for ast in state["asteroids"]:
@@ -129,8 +126,14 @@ def main():
             # 2) Handle Keypresses by state
             if event.type == pygame.KEYDOWN:
 
-                # Quit from menu or game_over
-                if game_state in ("menu", "game_over") and event.key == pygame.K_q:
+                # Quit from menu, paused or game_over
+                if game_state in ("menu", "paused", "game_over") and event.key == pygame.K_q:
+                    running = close_game(
+                        game_data["score"] if game_data else 0,
+                        hiscore
+                    )
+                    break
+                if game_state == "paused" and event.key == pygame.K_l:
                     running = close_game(
                         game_data["score"] if game_data else 0,
                         hiscore

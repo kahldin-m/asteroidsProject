@@ -1,5 +1,6 @@
 import pygame # type: ignore
 from circleshape import CircleShape
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Shot(CircleShape):
     def __init__(self, x, y, radius):
@@ -10,6 +11,7 @@ class Shot(CircleShape):
 
     def update(self, dt):
         self.position += (self.velocity * dt)
+        self.check_bounds(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     def check_bounds(self, screen_width=1280, screen_height=720):
         if (

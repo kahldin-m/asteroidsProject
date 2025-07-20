@@ -23,11 +23,13 @@ def draw_main_menu(surface, x, y):
 
 def draw_pause_menu(surface, x, y):
     font = pygame.font.SysFont("Arial", 40)
-    text1 = font.render("PAUSED", True, (0, 50, 150))
+    text1 = font.render("PAUSED", True, (0, 40, 155))
     text2 = score_font.render("Spacebar to Continue", True, (0, 0, 0))
+    text3 = score_font.render("L to Quit", True, (200, 0, 0))
     
     surface.blit(text1, (x - text1.get_width()//2, y - 100))
-    surface.blit(text2, (x - text2.get_width()//2, y))
+    surface.blit(text2, (x - text2.get_width()//2, y - 25))
+    surface.blit(text3, (x - text3.get_width()//2, y + 5))
 
 
 def draw_game_over(surface, x, y, score, highscore):

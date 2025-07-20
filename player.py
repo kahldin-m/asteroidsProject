@@ -1,7 +1,9 @@
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOT_SPEED, SHOT_RADIUS, PLAYER_SHOOT_COOLDOWN
 from shot import Shot
-import circleshape
 import pygame # type: ignore
+import circleshape
+from constants import (
+    PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOT_SPEED, SHOT_RADIUS, 
+    PLAYER_SHOOT_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT)
 
 class Player(circleshape.CircleShape):
     def __init__(self, x, y):
@@ -55,3 +57,5 @@ class Player(circleshape.CircleShape):
             # print(self.position)
         if keys[pygame.K_SPACE]:
             self.shoot()
+
+        self.check_bounds(SCREEN_WIDTH, SCREEN_HEIGHT)
