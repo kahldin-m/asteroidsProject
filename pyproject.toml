@@ -1,7 +1,7 @@
 [project]
 name = "asteroids"
 version = "0.1.0"
-description = "Add your description here"
+description = "A simple asteroids-like game. Slide around and pop bubbles for points."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
