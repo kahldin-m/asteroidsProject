@@ -1,14 +1,14 @@
-from shot import Shot
+import math
 import pygame # type: ignore
 import circleshape
+from shot import Shot
 from constants import (
     PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOT_SPEED, SHOT_RADIUS, 
-    PLAYER_SHOOT_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT)
+    PLAYER_SHOOT_COOLDOWN, FLASH_FREQUENCY, IFRAMES, SCREEN_WIDTH, SCREEN_HEIGHT)
 
 class Player(circleshape.CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
-
         self.rotation = 0
         self.shot_timer = 0
 
@@ -22,7 +22,19 @@ class Player(circleshape.CircleShape):
         return [a, b, c]
     
     def draw(self, screen):
-        pygame.draw.polygon(screen, "black", self.triangle(), 2)
+        if self.respawn_timer > 0:
+            elapsed = IFRAMES - self.respawn_timer
+            theta   = 2 * math.pi * FLASH_FREQUENCY * (elapsed / IFRAMES)
+            t       = (math.sin(theta) + 1) / 2
+            base    = pygame.Color(0, 0, 0)
+            flash   = pygame.Color(175, 200, 255)
+            color   = base.lerp(flash, t)
+            # "black" if self.respawn_timer <= 0 else (190, 190, 255)
+        else:
+            color = "black"
+        
+        pygame.draw.polygon(screen, color, self.triangle(), 2)
+        
 
     def rotate_player(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt

@@ -6,6 +6,15 @@ score_font = pygame.font.SysFont("Arial", 24)
 def draw_score(surface, score):
     surface.blit(score_font.render(f"Score: {score}", True, (0, 0, 0)), (10,10))
 
+def draw_lives(surface, lives, x, y):
+    for i in range(lives):
+        offset = i * 30
+        pygame.draw.circle(
+            surface, (0, 150, 150),
+            (x + offset, y),
+            10, 2
+        )
+
 def draw_main_menu(surface, x, y):
     font = pygame.font.SysFont("Arial", 48)
     text1 = font.render("Bubblegun", True, (0, 5, 250))

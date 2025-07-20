@@ -3,10 +3,10 @@ from shot import Shot
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, IFRAMES, BG_COLOR
 from game_ui import (
     draw_score, draw_main_menu, draw_game_over, draw_pause_menu, 
-    load_highscore, save_highscore
+    draw_lives, load_highscore, save_highscore
 )
 
 def close_game(score, highscore):
@@ -28,6 +28,7 @@ def initialize_game(center_x, center_y):
     # AsteroidField.containers = (updateable,)
     
     player = Player(center_x, center_y)
+    player.respawn_timer = 0.0
     field = AsteroidField(asteroids)
     updateable.add(field)
 
@@ -39,24 +40,48 @@ def initialize_game(center_x, center_y):
         "updateable":   updateable,
         "drawable":     drawable,
         "shots":        shots,
-        "score":        0
+        "score":        0,
+        "lives":        3,
         }
 
 def handle_menu(window, cx, cy):  # center_x(y)
-    window.fill("white")
+    window.fill(BG_COLOR)
     draw_main_menu(window, cx, cy)
     pygame.display.flip()
 
 
 def handle_playing(window, dt, state):
-    window.fill("white")
+    window.fill(BG_COLOR)
+
+    # Update everything
     state["updateable"].update(dt)
+
+    # Draw all sprires, lives and score
+    for sprite in state["drawable"]:
+        sprite.draw(window)
+    draw_lives(window, state["lives"], 20, 50)
+    draw_score(window, state["score"])
+    pygame.display.flip()
+
+    if state["player"].respawn_timer > 0:
+        state["player"].respawn_timer -= dt
+        return "playing"
 
     # Collision check: player dies
     for ast in state["asteroids"]:
         if ast.detect_collision(state["player"]):
-            print("Game over!")
-            return "game_over"
+            state["lives"] -= 1
+            if state["lives"] > 0:
+                # reset player
+                state["player"].position = pygame.Vector2(
+                    SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2
+                )
+                state["player"].velocity = pygame.Vector2(0,0)
+                state["player"].respawn_timer = IFRAMES
+                return "playing"
+            else:
+                print("No lives left - Game over!")
+                return "game_over"
 
     # Collision check: shot hits bubble
     for ast in state["asteroids"]:
@@ -68,12 +93,6 @@ def handle_playing(window, dt, state):
                 shot.kill()
                 ast.split()
 
-    # Draw all spires and score
-    for sprite in state["drawable"]:
-        sprite.draw(window)
-    draw_score(window, state["score"])
-    pygame.display.flip()
-
     return "playing"
     
 
@@ -81,12 +100,13 @@ def handle_paused(window, cx, cy, state):
     window.fill((150, 150, 150))
     draw_pause_menu(window, cx, cy)
     draw_score(window, state["score"])
+    draw_lives(window, state["lives"], 20, 50)
     for sprite in state["drawable"]:
         sprite.draw(window)
     pygame.display.flip()
 
 def handle_game_over(window, cx, cy, score, hiscore):
-    window.fill("white")
+    window.fill(BG_COLOR)
     draw_game_over(window, cx, cy, score, hiscore)
     pygame.display.flip()
 
